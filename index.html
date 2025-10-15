@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Top Up Game - Demo</title>
+<style>
+  body{font-family:system-ui,Segoe UI,Roboto;max-width:900px;margin:24px auto;padding:12px}
+  .card{border:1px solid #eee;padding:16px;border-radius:8px;margin-bottom:12px}
+  label{display:block;margin-top:8px}
+  input,select{width:100%;padding:8px;margin-top:4px;border-radius:6px;border:1px solid #ccc}
+  .row{display:flex;gap:8px}
+  button{background:#25D366;color:white;border:none;padding:10px 14px;border-radius:8px;cursor:pointer}
+  .small{font-size:0.9rem;color:#555}
+</style>
+</head>
+<body>
+  <h1>Top Up Game (Demo)</h1>
+  <div class="card">
+    <h2>Pilih Paket</h2>
+    <select id="paket">
+      <option value="50 UC - Rp 10.000">PUBG - 50 UC — Rp 10.000</option>
+      <option value="300 UC - Rp 50.000">PUBG - 300 UC — Rp 50.000</option>
+      <option value="Diamond 50 - Rp 12.000">Mobile Legends - 50 Diamond — Rp 12.000</option>
+    </select>
+
+    <label>Game / Server</label>
+    <input id="game" placeholder="Contoh: PUBG Mobile / Server Asia" />
+
+    <label>UserID / Nickname</label>
+    <input id="userid" placeholder="Masukkan UserID atau nickname" />
+
+    <label>Nama</label>
+    <input id="nama" placeholder="Nama pemesan" />
+
+    <label>Nomor WhatsApp Anda (contoh: 62812xxxx)</label>
+    <input id="wa" placeholder="62812..." />
+
+    <p class="small">Setelah klik tombol, Anda akan diarahkan ke WhatsApp dengan pesan pesanan terisi. Lakukan transfer ke nomor tertera pada halaman berikutnya dan unggah bukti transfer.</p>
+
+    <div style="margin-top:12px" class="row">
+      <button id="waBtn">Pesan via WhatsApp</button>
+      <button id="copyBtn" style="background:#444">Salin Pesan</button>
+    </div>
+
+    <div id="info" style="margin-top:12px" class="small">
+      Nomor pembayaran (contoh): <strong>OVO / Gopay: 0812xxxxxxx (a.n. TokoDemo)</strong>
+    </div>
+  </div>
+
+<script>
+function encode(text){ return encodeURIComponent(text); }
+
+document.getElementById('waBtn').addEventListener('click', function(){
+  const paket = document.getElementById('paket').value;
+  const game = document.getElementById('game').value || '-';
+  const userid = document.getElementById('userid').value || '-';
+  const nama = document.getElementById('nama').value || '-';
+  const wa = document.getElementById('wa').value.replace(/\D/g,''); // angka saja
+  if(!wa){ alert('Masukkan nomor WhatsApp Anda (contoh 62812...)'); return; }
+
+  const message = [
+    'Halo, saya mau top up.',
+    'Game/Server: '+game,
+    'UserID/Nick: '+userid,
+    'Paket: '+paket,
+    'Nama: '+nama,
+    'Metode Bayar: (transfer ke OVO/Gopay/BCA dll)',
+    'Catatan:'
+  ].join('\\n');
+
+  // ganti nomor tujuan dengan nomor admin / toko Anda (6281xxx...)
+  const toko = '6281234567890';
+  const url = 'https://wa.me/' + toko + '?text=' + encode(message);
+  window.open(url, '_blank');
+});
+
+// Salin pesan ke clipboard
+document.getElementById('copyBtn').addEventListener('click', function(){
+  const paket = document.getElementById('paket').value;
+  const game = document.getElementById('game').value || '-';
+  const userid = document.getElementById('userid').value || '-';
+  const nama = document.getElementById('nama').value || '-';
+  const message = `Halo, saya mau top up.%0AGame: ${game}%0AUserID: ${userid}%0APaket: ${paket}%0ANama: ${nama}`;
+  navigator.clipboard.writeText(decodeURIComponent(message)).then(()=> alert('Pesan disalin. Paste ke WhatsApp/Chat'));
+});
+</script>
+</body>
+</html>
